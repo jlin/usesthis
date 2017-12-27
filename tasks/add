@@ -1,37 +1,37 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 source_path = File.dirname(__dir__)
+$LOAD_PATH.unshift(source_path)
 
-$:.unshift(source_path)
+editor = ENV['EDITOR'] || 'vi'
 
-abort("You must supply a type ('hardware' or 'software').") unless ARGV[0] =~ /^(hardware|software)$/
-abort("You must provide a name.") if ARGV[1].nil?
+unless ARGV[0].match?(/^(hardware|software)$/)
+  abort("You must supply a type ('hardware' or 'software').")
+end
+
+abort('You must provide a name.') if ARGV[1].nil?
 
 type = ARGV[0]
 name = ARGV[1..-1].join(' ')
-slug = name.downcase.gsub(/ /, '-')
+slug = name.downcase.tr(' ', '-')
+prefix = slug[0].match?(/[a-z]/) ? slug[0] : '0'
+path = File.join(source_path, 'gear', type, prefix, "#{slug}.json")
 
-software_path = File.join(source_path, 'data', 'software', "#{slug}.yml")
-hardware_path = File.join(source_path, 'data', 'hardware', "#{slug}.yml")
-
-file = case type
-  when 'software' then software_path
-  when 'hardware' then hardware_path
+unless Dir.glob(path.gsub(type, '**')).empty?
+  abort("Entry already exists for '#{slug}'.")
 end
 
-if File.exists?(file)
-  puts "Entry already exists for '#{slug}'."
-else
-  entry = <<ENTRY
----
-name: #{name}
-description: (description)
-url: (url)
+entry = <<ENTRY
+{
+  "name": "#{name}",
+  "description": "(description)",
+  "url": "(url)"
+}
 ENTRY
 
-  File.open(file, 'w') do |f|
-    f.write(entry)
-  end
+File.open(path, 'w') do |f|
+  f.write(entry)
 end
 
-`open #{file}`
+`#{editor} #{path}`

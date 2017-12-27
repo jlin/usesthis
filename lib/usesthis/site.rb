@@ -1,13 +1,10 @@
-require 'json'
-require 'json/ext'
+# frozen_string_literal: true
 
 module UsesThis
-  class Site < Salt::Site
-
+  # A class that generates the usesthis.com site.
+  class Site < Dimples::Site
     attr_accessor :hardware
     attr_accessor :software
-    attr_accessor :popular_hardware
-    attr_accessor :popular_software
 
     def initialize(config = {})
       super
@@ -15,51 +12,53 @@ module UsesThis
       @hardware = {}
       @software = {}
 
-      @popular_hardware = []
-      @popular_software = []
-
-      @output_paths[:wares] = File.join(@source_paths[:root], 'data')
-
-      set_hook(:after_post, :post_process_interview)
-      register(UsesThis::Interview)
+      @source_paths[:wares] = File.join(@source_paths[:root], 'gear')
     end
 
     def scan_files
+      scan_gear
       super
-
-      Dir.glob(File.join(@output_paths[:wares], 'hardware', '*.yml')).each do |path|
-        ware = UsesThis::Ware.new(path)
-        @hardware[ware.slug] = ware
-      end
-
-      Dir.glob(File.join(@output_paths[:wares], 'software', '*.yml')).each do |path|
-        ware = UsesThis::Ware.new(path)
-        @software[ware.slug] = ware
-      end
-
-      @posts.each do |post|
-        post.scan_links
-
-        post.hardware.each_key { |slug| @hardware[slug].interviews << {slug: post.slug, name: post.name} }
-        post.software.each_key { |slug| @software[slug].interviews << {slug: post.slug, name: post.name} }
-      end
-
-      @popular_hardware = @hardware.values.sort { |a, b| b.interviews.length <=> a.interviews.length }[0...10]
-      @popular_software = @software.values.sort { |a, b| b.interviews.length <=> a.interviews.length }[0...10]
     end
 
-    def post_process_interview(interview)
-      json_file = @klasses[:page].new(self)
-      json_file.extension = 'json'
-      json_file.contents = JSON.pretty_generate(interview.to_hash)
+    def scan_gear
+      %w[hardware software].each do |type|
+        type_path = File.join(@source_paths[:wares], type, '**', '*.json')
+        Dir.glob(type_path).sort.each do |path|
+          ware = case type
+                 when 'hardware'
+                   UsesThis::Hardware.new(path)
+                 when 'software'
+                   UsesThis::Software.new(path)
+                 end
 
-      json_file.write(File.join(@output_paths[:posts], interview.slug))
+          send(type)[ware.slug] = ware
+        end
+      end
+    end
 
-      markdown_file = @klasses[:page].new(self)
-      markdown_file.extension = 'markdown'
-      markdown_file.contents = interview.to_markdown
+    def publish_files
+      Api::InterviewsGenerator.generate(self)
+      Api::CategoriesGenerator.generate(self)
+      Api::WaresGenerator.generate(self)
+      Api::StatsGenerator.generate(self)
 
-      markdown_file.write(File.join(@output_paths[:posts], interview.slug))      
+      super
+    end
+
+    def publish_posts
+      super
+
+      errors_path = File.join(@source_paths[:root], 'errors', '*.markdown')
+
+      Dir.glob(errors_path) do |path|
+        page = @post_class.new(self, path)
+
+        page.output_directory = @output_paths[:site]
+        page.filename = page.slug
+        page.layout = 'interview'
+
+        page.write
+      end
     end
   end
 end

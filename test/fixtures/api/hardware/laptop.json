@@ -1,0 +1,19 @@
+{
+  "data": [
+    {
+      "type": "wares",
+      "id": "laptop",
+      "attributes": {
+        "name": "Laptop",
+        "url": "http://www.example.com/laptop/",
+        "description": "A laptop.",
+        "interviews": [
+          {
+            "slug": "interviewee",
+            "name": "Interviewee"
+          }
+        ]
+      }
+    }
+  ]
+}

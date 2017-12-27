@@ -1,33 +1,43 @@
 #!/usr/bin/env ruby
-
-require 'date'
+# frozen_string_literal: true
 
 source_path = File.dirname(__dir__)
+$LOAD_PATH.unshift(source_path)
 
-$:.unshift(source_path)
+require 'date'
+require 'fileutils'
 
-abort("You must supply a name for the interviewee.") if ARGV.length < 2
+editor = ENV['EDITOR'] || 'vi'
+
+abort('You must supply a name for the interviewee.') if ARGV.length < 2
 
 name = ARGV.join(' ')
-slug = name.downcase.gsub(/ /, '.')
+slug = name.downcase.tr(' ', '.')
 
-date = Time.now.to_date
-found_day = false
+date_pattern = /\d{4}-\d{2}-\d{2}/
 
-while !found_day
-  if date.strftime('%a') =~ /Tue|Thu/
-    found_day = true
-  else
-    date = date.next_day
-  end
+interviews = Dir.glob(File.join(source_path, 'posts', '*.markdown')).sort
+latest_date = File.basename(interviews.reverse.first).match(date_pattern)[0]
+next_date = Date.parse(latest_date).next_day
+
+loop do
+  break if next_date.strftime('%a').match?(/Tue|Thu/)
+  next_date = next_date.next_day
 end
 
-file_path = File.join(source_path, 'posts', "#{date.strftime('%Y-%m-%d')}-#{slug}.interview")
-abort("Interview already exists for #{slug}.") if File.exists?(file_path)
+formatted_next_date = next_date.strftime('%Y-%m-%d')
+
+filename = "#{formatted_next_date}-#{slug}.markdown"
+file_path = File.join(source_path, 'posts', filename)
+
+abort("Interview already exists for #{slug}.") if File.exist?(file_path)
+
+portrait_path = File.join(source_path, 'public', 'images', 'interviews', slug)
+FileUtils.mkdir(portrait_path) unless File.exist?(portrait_path)
 
 output = <<OUTPUT
 ---
-name: #{name}
+title: #{name}
 summary: (summary)
 categories:
 - (category)
@@ -48,4 +58,6 @@ File.open(file_path, 'w') do |file|
   file.write(output)
 end
 
-`open #{file_path}`
+Dir.chdir(source_path) do
+  `#{editor} . && #{editor} #{file_path}`
+end

@@ -1,4 +1,0 @@
----
-name: SSH FS
-description: An SSH file system for MacFUSE.
-url: http://code.google.com/p/macfuse/wiki/MACFUSE_FS_SSHFS

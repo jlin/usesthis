@@ -2,11 +2,20 @@
 layout: default
 ---
 
-<article id="interview" class="h-card vcard">
-  <%= @site.render('interviewee', {interview: @this, selected: true}) %>
-  <%= @this.markdown %>
+<article class="h-card">
+  <header>
+    <%= render_template('shared.interview', interview: @this, selected: true) %>
+  </header>
 
-  <% if @this.license %>
-  <p class="license">This interview is available under the <a href="http://creativecommons.org/licenses/<%= @this.license %>/3.0/" title="View details of the license."><%= @this.license.upcase %> Creative Commons license</a>.</p>
+  <%= yield %>
+
+  <% if @this.licence %><p id="licence"><strong>Note:</strong> This interview is available under the <a href="http://creativecommons.org/licenses/<%= @this.licence %>/3.0/" title="View details of the licence."><%= @this.licence.upcase %> Creative Commons licence</a>.</p><% end %>
+
+  <% if @this.previous_post || @this.next_post %>
+  <nav id="paginator">
+    <% if @this.next_post %>Next: <a href="/interviews/<%= @this.next_post.slug %>/" title="Read the interview with <%= @this.next_post.title %>" id="next"><%= @this.next_post.title %></a><% end %>
+    <% if @this.previous_post && @this.next_post %> / <% end %>
+    <% if @this.previous_post %>Previously: <a href="/interviews/<%= @this.previous_post.slug %>/" title="Read the interview with <%= @this.previous_post.title %>" id="previous"><%= @this.previous_post.title %></a><% end %>
+  </nav>
   <% end %>
 </article>

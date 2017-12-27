@@ -3,62 +3,35 @@ layout: default
 title: About
 ---
 
-<article id="about">
-  <h3>What's all this?</h3>
-  <p>The Setup is a collection of nerdy interviews asking people from all walks of life what they use to get the job done.</p>
+<h3>What's all this?</h3>
+<p>
+Uses This is a collection of nerdy interviews asking people from all walks of life what they use to get the job done.
+There are currently <strong><%= @site.posts.count %></strong> interviews mentioning <strong><%= @site.hardware.count %></strong> pieces of hardware and <strong><%= @site.software.count %></strong> bits of software.
+</p>
 
-  <section id="faq">
-    <h4>Questions</h4>
-    <dl>
-      <dt>When are new interviews posted?</dt>
-      <dd>Every <strong>Tuesday</strong> and <strong>Thursday</strong>.</dd>
-      
-      <dt>Can I suggest someone to interview?</dt>
-      <dd>Please! Either via email or on Twitter (see below).</d>
+<h4 id="faq">FAQ</h4>
+<dl>
+  <dt id="schedule">When are new interviews posted?</dt>
+  <dd>Every <strong>Tuesday</strong> and <strong>Thursday</strong>, <a href="http://www.timeanddate.com/worldclock/australia/melbourne" title="View the current time in Melbourne.">Melbourne time</a>.</dd>
 
-      <dt>Can I suggest myself?</dt>
-      <dd>I'd love it if you'd write up an interview with yourself, post it online and send me the link (or <a href="https://github.com/waferbaby/usesthis/fork" title="Create a fork of The Setup.">fork the site</a> and make a pull request)! I'll add it to the <a href="/community/" title="The community page.">Community</a> page.</dd>
+  <dt id="suggestion">Can I suggest someone to interview?</dt>
+  <dd>Yes, absolutely! Either via email or Twitter.</dd>
 
-      <dt>Isn't this some sort of Apple fan site?</dt>
-      <dd>Surprisingly not! People just like using their stuff.</dd>
+  <dt id="myself">Can I suggest myself?</dt>
+  <dd>If you post your own interview online and send me the link, I'd love to share it on Twitter!</dd>
 
-      <dt>Can I make my own version of The Setup?</dt>
-      <dd><strong>Yeah!</strong> Everything is freely available <a href="http://github.com/waferbaby/usesthis/" title="The source code for the site.">on Github</a> - go nuts! And let me know if you do, so I can link to it.</dd>
+  <dt id="apple">Is this some sort of Apple fan site?</dt>
+  <dd>Surprisingly, no! People just like using their stuff - I try to pick interesting people, and don't usually know what gear they're using beforehand.</dd>
 
-      <dt>Who runs The Setup?</dt>
-      <dd>Daniel. I'm just some guy.</dd>
+  <dt id="clone">Can I make my own version of the site?</dt>
+  <dd>Of course! The whole site is freely available <a href="http://github.com/waferbaby/usesthis/" title="The source code for the site.">on GitHub</a> - go nuts! And if you do end up making your own, let me know so I can link to it.</dd>
 
-      <dt>How do I get in touch with you?</dt>
-      <dd>Send an email to the fourth letter of the English alphabet, followed by the 'at' symbol, care of this domain. Or you can ping me <a href="http://twitter.com/usesthis/" title="The usesthis Twiter account.">on Twitter</a>.</dd>
-    </dl>
-  </section>
+  <dt id="who">Who runs the site?</dt>
+  <dd>I'm <a href="http://twitter.com/waferbaby" title="Some dude's Twitter account.">Daniel Bogan</a>, a web nerd in Melbourne.</dd>
 
-  <section id="gear">
-    <h4>Popular gear</h4>
-    <p>This is the hardware and software most mentioned on the site.</p>
+  <dt id="contact">How do I get in touch with you?</dt>
+  <dd>Send an email to the fourth letter of the English alphabet, followed by the 'at' symbol, care of this domain. You can also ping me <a href="http://twitter.com/usesthis/" title="The Uses This Twitter account.">on Twitter</a>.</dd>
 
-    <div id="hardware">
-      <h5>Hardware</h5>
-      <ol>
-        <% @site.popular_hardware.each do |item| %>
-        <li>
-          <a href="<%= item.url %>" title="<% item.description %>"><%= item.name %></a><br>
-          <span class="summary"><%= item.description %></span>
-        </li>
-        <% end %>
-      </ol>
-    </div>
-
-    <div id="software">
-      <h5>Software</h5>
-      <ol>
-        <% @site.popular_software.each do |item| %>
-        <li>
-          <a href="<%= item.url %>" title="<% item.description %>"><%= item.name %></a><br>
-          <span class="summary"><%= item.description %></span>
-        </li>
-        <% end %>
-      </ol>
-    </div>
-  </section>
-</article>
+  <dt id="money">Do you make any money from the site?</dt>
+  <dd>I'm using <a href="https://www.digitalocean.com/?refcode=b59c4de92bdc" title="My hosting provider (with a referral code in the link)." rel="nofollow">DigitalOcean</a> to host the site, and if you sign up via that link I get credit towards my hosting.</dd>
+</dl>

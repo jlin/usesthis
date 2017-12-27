@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+<title>Uses This<% if @category %> / <%= @category.capitalize %><% end %></title>
+<link href="http://usesthis.com/<% if @category %>/interviews/<%= @category %>/<% end %>feed.atom" rel="self"/>
+<link href="http://usesthis.com/"/>
+<updated><%= Time.new.strftime('%FT%T') %>Z</updated>
+<id>http://usesthis.com/</id>
+<author>
+  <name>Daniel Bogan</name>
+</author>
+
+<% @posts.each do |interview| %>
+<entry>
+  <id>https://usesthis.com/interviews/<%= interview.slug %>/</id>
+  <title><%= interview.title %></title>
+  <link href="https://usesthis.com/interviews/<%= interview.slug %>/"/>
+  <updated><%= interview.date.strftime('%FT%T') %>Z</updated>
+  <content type="html">
+    <%== "<p><img src=\"http://usesthis.com/images/interviews/#{interview.slug}/portrait.jpg\" width=\"500\" height=\"325\" alt=\"#{interview.title}\"></p>" %>
+    <%== interview.rendered_contents %>
+    &lt;hr&gt;
+    <%== "<p>Thanks for reading! If you're enjoying the interviews, you can help keep this nerdy lil' site independent <a href=\"https://www.patreon.com/waferbaby\" title=\"My Patreon account for The Setup.\">for as little as $1 a month!</a></p>" %>
+  </content>
+</entry>
+<% end %>
+
+</feed>
